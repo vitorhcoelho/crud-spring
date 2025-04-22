@@ -1,6 +1,7 @@
 package com.vitorhcoelho.dto.mapper;
 
 import com.vitorhcoelho.dto.CourseDTO;
+import com.vitorhcoelho.enums.Category;
 import com.vitorhcoelho.model.Course;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ public class CourseMapper {
             return null;
         }
 
-        return new CourseDTO(course.getId(), course.getName(), course.getCategory());
+        return new CourseDTO(course.getId(), course.getName(), course.getCategory().getValue());
     }
 
     public Course toEntity(CourseDTO courseDTO) {
@@ -27,9 +28,21 @@ public class CourseMapper {
         }
 
         course.setName(courseDTO.name());
-        course.setCategory(courseDTO.category());
-        course.setStatus("Active");
+        course.setCategory(converCategoryValue(courseDTO.category()));
 
         return course;
+    }
+
+    public Category converCategoryValue(String categoryValue) {
+        if (categoryValue == null) {
+            return null;
+        }
+
+        return switch (categoryValue) {
+            case "Backend" -> Category.BACKEND;
+            case "Frontend" -> Category.FRONTEND;
+            default -> throw new IllegalArgumentException("Invalid category value: " + categoryValue);
+        };
+
     }
 }

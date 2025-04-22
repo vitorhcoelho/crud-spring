@@ -1,14 +1,13 @@
 package com.vitorhcoelho.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.vitorhcoelho.enums.Category;
+import com.vitorhcoelho.enums.Status;
+import com.vitorhcoelho.enums.converters.CategoryConverter;
+import com.vitorhcoelho.enums.converters.StatusConverter;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -36,15 +35,13 @@ public class Course {
   private String name;
 
   @NotNull
-  @Length(max = 10)
-  @Pattern(regexp = "Backend|Frontend")
   @Column(length = 10, nullable = false)
-  private String category;
+  @Convert(converter = CategoryConverter.class)
+  private Category category;
 
   @NotNull
-  @Length(max = 10)
-  @Pattern(regexp = "Active|Inactive")
   @Column(length = 10, nullable = false)
-  private String status = "Active";
+  @Convert(converter = StatusConverter.class)
+  private Status status = Status.ACTIVE;
 
 }
