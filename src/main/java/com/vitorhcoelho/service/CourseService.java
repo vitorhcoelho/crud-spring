@@ -13,27 +13,27 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Validated
-@Service
-public class CourseService {
+        @Validated
+        @Service
+        public class CourseService {
 
-    private final CourseRepository courseRepository;
-    private final CourseMapper courseMapper;
+            private final CourseRepository courseRepository;
+            private final CourseMapper courseMapper;
 
-    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
-        this.courseRepository = courseRepository;
-        this.courseMapper = courseMapper;
-    }
+            public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
+                this.courseRepository = courseRepository;
+                this.courseMapper = courseMapper;
+            }
 
-    public List<CourseDTO> list() {
-        return this.courseRepository.findAll().stream().map(courseMapper::toDTO).collect(Collectors.toList());
+            public List<CourseDTO> list() {
+                return this.courseRepository.findAll().stream().map(courseMapper::toDTO).collect(Collectors.toList());
     }
 
     public CourseDTO listById(@NotNull @Positive Long id) {
         return courseRepository.findById(id).map(courseMapper::toDTO).orElseThrow(() -> new RecordNotFoundException(id));
     }
 
-    public CourseDTO create(@Valid @NotNull CourseDTO courseDTO) {
+    public CourseDTO create(@NotNull @Valid CourseDTO courseDTO) {
         return courseMapper.toDTO(courseRepository.save(courseMapper.toEntity(courseDTO)));
     }
 

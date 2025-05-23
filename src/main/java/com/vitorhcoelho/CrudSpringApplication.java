@@ -1,6 +1,7 @@
 package com.vitorhcoelho;
 
 import com.vitorhcoelho.enums.Category;
+import com.vitorhcoelho.model.Lesson;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,8 +20,6 @@ public class CrudSpringApplication {
 	@Bean
 	CommandLineRunner initDatabase(CourseRepository courseRepository) {
 		return args -> {
-//			courseRepository.deleteAll();
-
 			Course c = new Course();
 			c.setName("Angular");
 			c.setCategory(Category.FRONTEND);
@@ -30,6 +29,12 @@ public class CrudSpringApplication {
 			Course c2 = new Course();
 			c2.setName("Java + Spring");
 			c2.setCategory(Category.BACKEND);
+
+			Lesson l = new Lesson();
+			l.setName("Spring Boot");
+			l.setYoutubeUrl("6q2v4g0a1xM");
+			l.setCourse(c2);
+			c2.getLessons().add(l);
 
 			courseRepository.save(c2);
 		};
