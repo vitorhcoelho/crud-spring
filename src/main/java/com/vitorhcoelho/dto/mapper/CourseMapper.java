@@ -1,9 +1,12 @@
 package com.vitorhcoelho.dto.mapper;
 
 import com.vitorhcoelho.dto.CourseDTO;
+import com.vitorhcoelho.dto.LessonDTO;
 import com.vitorhcoelho.enums.Category;
 import com.vitorhcoelho.model.Course;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class CourseMapper {
@@ -13,7 +16,11 @@ public class CourseMapper {
             return null;
         }
 
-        return new CourseDTO(course.getId(), course.getName(), course.getCategory().getValue());
+        List<LessonDTO> lessons = course.getLessons().stream()
+                .map(lesson -> new LessonDTO(lesson.getId(), lesson.getName(), lesson.getYoutubeUrl()))
+                .toList();
+
+        return new CourseDTO(course.getId(), course.getName(), course.getCategory().getValue(), lessons);
     }
 
     public Course toEntity(CourseDTO courseDTO) {

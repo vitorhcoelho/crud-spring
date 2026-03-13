@@ -47,7 +47,7 @@ public class Course {
   @Convert(converter = StatusConverter.class)
   private Status status = Status.ACTIVE;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "course")
   private List<Lesson> lessons = new ArrayList<>();
 
 }
