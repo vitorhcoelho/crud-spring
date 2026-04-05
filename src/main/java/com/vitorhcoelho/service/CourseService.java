@@ -3,6 +3,7 @@ package com.vitorhcoelho.service;
 import com.vitorhcoelho.dto.CourseDTO;
 import com.vitorhcoelho.dto.mapper.CourseMapper;
 import com.vitorhcoelho.exception.RecordNotFoundException;
+import com.vitorhcoelho.model.Course;
 import com.vitorhcoelho.repository.CourseRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -39,8 +40,13 @@ import java.util.stream.Collectors;
 
     public CourseDTO update(@NotNull @Positive Long id, @Valid @NotNull CourseDTO courseDTO) {
         return courseRepository.findById(id).map(recordFound -> {
+            Course course = courseMapper.toEntity(courseDTO);
             recordFound.setName(courseDTO.name());
             recordFound.setCategory(courseMapper.converCategoryValue(courseDTO.category()));
+            recordFound.getLessons().clear();
+            course.getLessons().forEach(lesson -> {
+                recordFound.getLessons().add(lesson);
+            });
             return courseMapper.toDTO(courseRepository.save(recordFound));
         }).orElseThrow(() -> new RecordNotFoundException(id));
     }
