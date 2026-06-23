@@ -9,54 +9,43 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.vitorhcoelho.model.Course;
 import com.vitorhcoelho.repository.CourseRepository;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 public class CrudSpringApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CrudSpringApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CrudSpringApplication.class, args);
+    }
 
-	@Bean
-	CommandLineRunner initDatabase(CourseRepository courseRepository) {
-		return args -> {
-			Course c = new Course();
-			c.setName("Angular");
-			c.setCategory(Category.FRONTEND);
+    @Bean
+    @Profile("dev")
+    CommandLineRunner initDatabase(CourseRepository courseRepository) {
+        return args -> {
+            courseRepository.deleteAll();
 
-			Lesson l = new Lesson();
-			l.setName("Reactive Forms");
-			l.setYoutubeUrl("2d2v4g0a1xM");
-			l.setCourse(c);
-			c.getLessons().add(l);
+            for (int i = 0; i < 20; i++) {
+                Course c = new Course();
+                c.setName("Angular + Spring " + (i + 1));
+                c.setCategory(i % 2 == 0 ? Category.BACKEND : Category.FRONTEND);
 
-			Lesson l2 = new Lesson();
-			l2.setName("Components");
-			l2.setYoutubeUrl("3d2v4g0a1xM");
-			l2.setCourse(c);
-			c.getLessons().add(l2);
+                Lesson l = new Lesson();
+                l.setName("Controllers " + (i + 1));
+                l.setYoutubeUrl("2d2v4g0a1xM");
+                l.setCourse(c);
+                c.getLessons().add(l);
 
-			courseRepository.save(c);
+                Lesson l2 = new Lesson();
+                l2.setName("Pagination " + (i + 1));
+                l2.setYoutubeUrl("3d2v4g0a1xM");
+                l2.setCourse(c);
+                c.getLessons().add(l2);
 
-			Course c2 = new Course();
-			c2.setName("Java + Spring");
-			c2.setCategory(Category.BACKEND);
+                courseRepository.save(c);
+            }
 
-			Lesson l3 = new Lesson();
-			l3.setName("Spring Boot");
-			l3.setYoutubeUrl("6q2v4g0a1xM");
-			l3.setCourse(c2);
-			c2.getLessons().add(l3);
+        };
 
-			Lesson l4 = new Lesson();
-			l4.setName("Spring Data JPA");
-			l4.setYoutubeUrl("7q111g0a1xM");
-			l4.setCourse(c2);
-			c2.getLessons().add(l4);
-
-			courseRepository.save(c2);
-		};
-
-	}
+    }
 
 }

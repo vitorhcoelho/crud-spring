@@ -1,33 +1,42 @@
 package com.vitorhcoelho.service;
 
 import com.vitorhcoelho.dto.CourseDTO;
+import com.vitorhcoelho.dto.CoursePageDTO;
 import com.vitorhcoelho.dto.mapper.CourseMapper;
 import com.vitorhcoelho.exception.RecordNotFoundException;
 import com.vitorhcoelho.model.Course;
 import com.vitorhcoelho.repository.CourseRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-        @Validated
-        @Service
-        public class CourseService {
+@Validated
+@Service
+public class CourseService {
 
-            private final CourseRepository courseRepository;
-            private final CourseMapper courseMapper;
+    private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
-            public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
-                this.courseRepository = courseRepository;
-                this.courseMapper = courseMapper;
-            }
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
+        this.courseRepository = courseRepository;
+        this.courseMapper = courseMapper;
+    }
 
-            public List<CourseDTO> list() {
-                return this.courseRepository.findAll().stream().map(courseMapper::toDTO).collect(Collectors.toList());
+    public CoursePageDTO list(@PositiveOrZero int page, @Positive @Max(100) int pageSize) {
+        Page<Course> pageCourse = this.courseRepository.findAll(PageRequest.of(page, pageSize));
+        List<CourseDTO> courses = pageCourse.get().map(courseMapper::toDTO).collect(Collectors.toList());
+
+        return new CoursePageDTO(courses, pageCourse.getTotalElements(), pageCourse.getTotalPages());
     }
 
     public CourseDTO listById(@NotNull @Positive Long id) {

@@ -3,10 +3,13 @@ package com.vitorhcoelho.controller;
 import java.util.List;
 
 import com.vitorhcoelho.dto.CourseDTO;
+import com.vitorhcoelho.dto.CoursePageDTO;
 import com.vitorhcoelho.service.CourseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +26,8 @@ public class CourseController {
     }
 
     @GetMapping
-    public List<CourseDTO> list() {
-        return courseService.list();
+    public CoursePageDTO list(@RequestParam(defaultValue = "0") @PositiveOrZero int page, @RequestParam(defaultValue = "10") @Positive @Max(100) int pageSize) {
+        return courseService.list(page, pageSize);
     }
 
     @GetMapping("/{id}")
